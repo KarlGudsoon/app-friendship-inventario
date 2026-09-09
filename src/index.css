@@ -1,2 +1,14 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Josefin";
+  src: url("./assets/fonts/JosefinSans-Regular.ttf") format("truetype");
+}
+
+body {
+  @apply bg-black bg-[url('/img/fondo.svg')] bg-repeat bg-size-[300px,300px] font-sans;
+}
+
+#root {
+  @apply h-screen flex flex-col;
+}

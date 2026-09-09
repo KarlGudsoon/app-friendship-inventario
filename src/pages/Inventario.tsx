@@ -1,82 +1,109 @@
-import { useEffect, useState } from 'react'
-import { supabase } from '../utils/supabaseClient'
+import { useEffect, useState } from "react";
+import { supabase } from "../utils/supabaseClient";
 
 interface Producto {
-  id: number
-  nombre: string
-  stock_actual: number
-  stock_minimo: number
+  id: number;
+  nombre: string;
+  stock_actual: number;
+  stock_minimo: number;
 }
 
 export default function Inventario() {
-  const [productos, setProductos] = useState<Producto[]>([])
-  const [loading, setLoading] = useState(true)
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData()
-  }, [])
-
-
+    fetchData();
+  }, []);
 
   async function fetchData() {
-    setLoading(true)
+    setLoading(true);
     const { data, error } = await supabase
-      .from('productos')
-      .select('*')
-      .order('nombre', { ascending: true })
+      .from("productos")
+      .select("*")
+      .order("nombre", { ascending: true });
 
-    if (error) console.error(error)
-    else setProductos(data as Producto[])
-    setLoading(false)
+    if (error) console.error(error);
+    else setProductos(data as Producto[]);
+    setLoading(false);
   }
 
-  if (loading) return <p className="p-6">Cargando...</p>
+  if (loading) return <p className="p-6">Cargando...</p>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Inventario</h1>
+    <div className="p-6 flex-1 min-h-0 overflow-hidden flex flex-col text-white">
+      {/* <div className="mb-4 bg-amber-300 text-black p-4 rounded-2xl shadow-md shadow-black/25">
+        <h1 className="text-xl font-bold">Inventario cocina</h1>
+      </div> */}
 
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="border-b text-left">
-            <th className="py-2 px-3">Producto</th>
-            <th className="py-2 px-3">Stock actual</th>
-            <th className="py-2 px-3">Stock mínimo</th>
-            <th className="py-2 px-3">Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          {productos.map((producto) => {
-            const stockBajo = producto.stock_actual < producto.stock_minimo
+      <div className="flex-1 min-h-0 overflow-auto rounded-2xl shadow-md shadow-black/25">
+        <table className="w-full border-separate border-spacing-0 bg-[#1d1d1d] rounded-2xl">
+          <thead>
+            <tr className="text-black text-left">
+              <th className="py-2 px-3 sticky top-0 z-10 bg-amber-300 border-b">
+                Producto
+              </th>
+              <th className="py-2 px-3 sticky top-0 z-10 bg-amber-300 border-b">
+                Stock actual
+              </th>
+              <th className="py-2 px-3 sticky top-0 z-10 bg-amber-300 border-b">
+                Stock mínimo
+              </th>
+              <th className="py-2 px-3 sticky top-0 z-10 bg-amber-300 border-b">
+                Estado
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {productos.map((producto) => {
+              const stockBajo = producto.stock_actual < producto.stock_minimo;
 
-            return (
-              <tr key={producto.id} className="border-b">
-                <td className="py-2 px-3">{producto.nombre}</td>
-                <input type="number" onBlur={(e) => actualizarStock(producto.id, Number(e.target.value))} className="border rounded px-2 py-1 w-20" defaultValue={producto.stock_actual} />
-                <td className="py-2 px-3">{producto.stock_minimo}</td>
-                <td className="py-2 px-3">
-                  {stockBajo ? (
-                    <span className="text-red-600 font-semibold">⚠ Stock bajo</span>
-                  ) : (
-                    <span className="text-green-600">OK</span>
-                  )}
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+              return (
+                <tr key={producto.id} className="">
+                  <td className="py-2 px-3 border-b border-amber-300/10">
+                    {producto.nombre}
+                  </td>
+                  <td className="py-2 px-3 border-b border-amber-300/10">
+                    <input
+                      type="number"
+                      onBlur={(e) =>
+                        actualizarStock(producto.id, Number(e.target.value))
+                      }
+                      className="border border-amber-300/10 text-center rounded-xl px-2 py-1 w-20 m-auto inset-shadow-[1px_1px_2px_rgba(0,0,0,0.5)] bg-[#313131] text-white focus:outline-none focus:ring-2 focus:ring-amber-300"
+                      defaultValue={producto.stock_actual}
+                    />
+                  </td>
+                  <td className="py-2 px-3 border-b border-amber-300/10">
+                    {producto.stock_minimo}
+                  </td>
+                  <td className="py-2 px-3 border-b border-amber-300/10">
+                    {stockBajo ? (
+                      <span className="text-red-600 font-semibold">
+                        ⚠ Stock bajo
+                      </span>
+                    ) : (
+                      <span className="text-green-700 bg-green-700/50 rounded-2xl px-4 py-1 font-semibold">
+                        OK
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
-  )
+  );
 }
 
 async function actualizarStock(id: number, nuevoStock: number) {
-    const { error } = await supabase
-    .from('productos')
-    .update({ stock_actual : nuevoStock })
-    .eq('id', id)
+  const { error } = await supabase
+    .from("productos")
+    .update({ stock_actual: nuevoStock })
+    .eq("id", id);
 
-    if (error) {
-        console.error('Error actualizando stock:', error)
-    }
+  if (error) {
+    console.error("Error actualizando stock:", error);
+  }
 }

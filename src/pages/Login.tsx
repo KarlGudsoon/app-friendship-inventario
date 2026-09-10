@@ -1,27 +1,30 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { supabase } from '../utils/supabaseClient'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../utils/supabaseClient";
 
 export default function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   async function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    setLoading(false)
+    setLoading(false);
 
     if (error) {
-      setError(error.message)
+      setError(error.message);
     } else {
-      navigate('/')
+      navigate("/");
     }
   }
 
@@ -66,9 +69,9 @@ export default function Login() {
           disabled={loading}
           className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 disabled:opacity-50"
         >
-          {loading ? 'Ingresando...' : 'Ingresar'}
+          {loading ? "Ingresando..." : "Ingresar"}
         </button>
       </form>
     </div>
-  )
+  );
 }

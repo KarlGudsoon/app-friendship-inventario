@@ -5,6 +5,30 @@
   src: url("./assets/fonts/JosefinSans-Regular.ttf") format("truetype");
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: transparent;
+}
+
+/* El "track" (el fondo por donde se desliza) */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* El "thumb" (la barra que arrastras) */
+::-webkit-scrollbar-thumb {
+  background-color: #d1a94a; /* tu color */
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box; /* para que el border cree un "padding" visual */
+}
+
+/* Color del thumb al pasar el mouse por encima */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #b8933d;
+}
+
 body {
   @apply bg-black bg-[url('/img/fondo.svg')] bg-repeat bg-size-[300px,300px] font-sans;
 }

@@ -1,50 +1,49 @@
-import { NavLink, useNavigate } from 'react-router-dom'
-import { supabase } from '../utils/supabaseClient'
-import { useAuth } from '../context/AuthContext'
+import { NavLink, useNavigate } from "react-router-dom";
+import { supabase } from "../utils/supabaseClient";
+import { useAuth } from "../context/AuthContext";
 
 export default function Nav() {
-    const navigate = useNavigate()
-    const { session } = useAuth()
+  const navigate = useNavigate();
+  const { session } = useAuth();
 
-    async function handleLogout() {
-        await supabase.auth.signOut()
-        navigate('/login')
-    }   
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    navigate("/login");
+  }
   return (
-    
-    <nav className="flex items-center gap-6 px-6 py-4 bg-white shadow-sm">
+    <nav className="flex items-center gap-6 px-6 py-4 bg-amber-300 shadow-sm">
       <span className="font-bold text-lg">🍔 Inventario</span>
       <div className="flex gap-4">
-        <NavLink to="/" className={({ isActive }) =>
-                isActive ? "text-black font-semibold" : "text-gray-700 hover:text-black"
-            }
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            isActive
+              ? "text-black font-semibold"
+              : "text-gray-700 hover:text-black"
+          }
         >
-            Inicio
+          Inicio
         </NavLink>
-        <NavLink to="/inventario" className={({ isActive }) =>
-                isActive ? "text-black font-semibold" : "text-gray-700 hover:text-black"
-            }
-            >
-            Inventario
+        <NavLink
+          to="/inventario"
+          className={({ isActive }) =>
+            isActive
+              ? "text-black font-semibold"
+              : "text-gray-700 hover:text-black"
+          }
+        >
+          Inventario
         </NavLink>
-        {!session && (
-            <NavLink to="/login" className={({ isActive }) =>
-                isActive ? "text-black font-semibold" : "text-gray-700 hover:text-black"
-            }
-            >
-            Iniciar sesión
-        </NavLink>
-        )}
-        
+
         {session && (
-        <button
-          onClick={handleLogout}
-          className="text-sm text-gray-700 hover:text-black border px-3 py-1 rounded"
-        >
-          Cerrar sesión
-        </button>
-      )}
+          <button
+            onClick={handleLogout}
+            className="text-sm text-gray-700 hover:text-black border px-3 py-1 rounded"
+          >
+            Cerrar sesión
+          </button>
+        )}
       </div>
     </nav>
-  )
+  );
 }

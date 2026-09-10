@@ -17,7 +17,9 @@ export default function Nav() {
   }
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "text-black font-semibold" : "text-gray-700 hover:text-black";
+    isActive
+      ? "text-black text-xl font-medium relative transition-all font-[Roadstore] before:absolute before:left-0 before:bottom-0 before:h-0.5 before:scale-y-0 before:w-full before:bg-black before:origin-left before:transition-all before:scale-y-100"
+      : "text-black text-xl font-medium font-[Roadstore]";
 
   return (
     <nav className="bg-amber-300 shadow-sm relative">
@@ -36,7 +38,7 @@ export default function Nav() {
           {session && (
             <button
               onClick={() => activarNotificaciones(session.user.id)}
-              className="text-sm text-gray-700 transition hover:scale-105 rounded"
+              className="text-xl p-2 text-gray-700 transition hover:scale-105 rounded-full bg-primary shadow-md"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

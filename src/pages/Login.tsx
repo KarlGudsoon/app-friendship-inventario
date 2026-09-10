@@ -32,9 +32,11 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-screen bg-black bg-[url('/img/fondo.svg')] bg-repeat bg-size-[300px,300px]">
       <form
         onSubmit={handleLogin}
-        className="bg-[#0f0f0f] text-white p-8 rounded-lg shadow-md w-full max-w-sm"
+        className="bg-primary text-black p-8 rounded-lg shadow-md w-full max-w-sm"
       >
-        <h1 className="text-xl font-bold mb-6 text-center">Iniciar sesión</h1>
+        <h1 className="text-xl font-bold mb-6 text-center font-[Roadstore]">
+          Iniciar sesión
+        </h1>
 
         {error && (
           <p className="bg-red-100 text-red-700 text-sm p-2 rounded mb-4">
@@ -49,7 +51,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full border border-amber-300 rounded px-3 py-2"
+            className="w-full border border-black/50 rounded px-3 py-2"
           />
         </div>
 
@@ -60,14 +62,14 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full border border-amber-300 rounded px-3 py-2"
+            className="w-full border border-black/50 rounded px-3 py-2"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-primary text-black py-2 rounded hover:bg-[#d2b007] disabled:opacity-50"
+          className="w-full bg-black text-primary py-2 rounded hover:bg-[#d2b007] disabled:opacity-50"
         >
           {loading ? "Ingresando..." : "Ingresar"}
         </button>

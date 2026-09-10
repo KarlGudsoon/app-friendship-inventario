@@ -51,7 +51,7 @@ export default function Inventario() {
   if (loading)
     return (
       <div className="p-6 flex-1 min-h-0 overflow-hidden flex flex-col text-white">
-        <div className="flex-1 h-full w-full overflow-auto bg-[#1d1d1d] rounded-2xl shadow-md shadow-black/25"></div>
+        <div className="flex-1 h-full w-full overflow-auto bg-secondary rounded-2xl shadow-md shadow-black/25"></div>
       </div>
     );
 
@@ -61,10 +61,10 @@ export default function Inventario() {
         <h1 className="text-xl font-bold">Inventario cocina</h1>
       </div> */}
 
-      <div className="flex-1 min-h-0 h-full bg-[#1d1d1d] overflow-auto rounded-2xl shadow-md shadow-black/25">
-        <table className="w-full border-separate border-spacing-0 bg-[#1d1d1d] rounded-2xl">
+      <div className="flex-1 min-h-0 h-full bg-secondary overflow-auto rounded-2xl shadow-md shadow-black/25">
+        <table className="w-full border-separate border-spacing-0 bg-secondary rounded-2xl">
           <thead>
-            <tr className="text-black text-left">
+            <tr className="text-black font-[Roadstore] text-left">
               <th className="py-2 px-3 sticky top-0 z-10 bg-amber-300 border-b">
                 Producto
               </th>
@@ -112,7 +112,7 @@ export default function Inventario() {
                         onBlur={(e) =>
                           actualizarStock(producto.id, Number(e.target.value))
                         }
-                        className="border border-amber-300/10 text-center rounded-xl px-2 py-1 w-20 m-auto inset-shadow-[1px_1px_2px_rgba(0,0,0,0.5)] bg-[#313131] text-white focus:outline-none focus:ring-2 focus:ring-amber-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        className="border border-amber-300/10 text-center rounded-xl px-2 py-1 w-20 m-auto inset-shadow-[1px_1px_2px_rgba(0,0,0,0.5)] text-white focus:outline-none focus:ring-2 focus:ring-amber-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                         value={producto.stock_actual}
                       />
                       <button

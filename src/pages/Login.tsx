@@ -34,6 +34,11 @@ export default function Login() {
         onSubmit={handleLogin}
         className="bg-primary text-black p-8 rounded-lg shadow-md w-full max-w-sm"
       >
+        <img
+          src="/img/logo-black.webp"
+          alt="Logo"
+          className="h-25 w-25 mx-auto mb-4"
+        />
         <h1 className="text-xl font-bold mb-6 text-center font-[Roadstore]">
           Iniciar sesión
         </h1>
@@ -51,7 +56,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full border border-black/50 rounded px-3 py-2"
+            className="w-full bg-black/15 border border-black/50 rounded-2xl px-3 py-2"
           />
         </div>
 
@@ -62,14 +67,14 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full border border-black/50 rounded px-3 py-2"
+            className="w-full bg-black/15 border border-black/50 rounded-2xl px-3 py-2"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-black text-primary py-2 rounded hover:bg-[#d2b007] disabled:opacity-50"
+          className="w-full bg-secondary text-primary py-2 rounded-2xl hover:bg-[#171717] hover:cursor-pointer disabled:opacity-50"
         >
           {loading ? "Ingresando..." : "Ingresar"}
         </button>

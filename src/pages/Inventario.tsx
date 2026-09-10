@@ -84,52 +84,64 @@ export default function Inventario() {
                     {producto.nombre}
                   </td>
                   <td className="py-2 px-3 border-b border-amber-300/10">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        actualizarStock(producto.id, producto.stock_actual - 1)
-                      }
-                      className="size-6  bg-amber-300 text-black shadow shadow-black/20 rounded-2xl mr-4"
-                    >
-                      -
-                    </button>
-                    <input
-                      type="number"
-                      id={`stock-${producto.id}`}
-                      onChange={(e) =>
-                        actualizarStockLocal(
-                          producto.id,
-                          Number(e.target.value),
-                        )
-                      }
-                      onBlur={(e) =>
-                        actualizarStock(producto.id, Number(e.target.value))
-                      }
-                      className="border border-amber-300/10 text-center rounded-xl px-2 py-1 w-20 m-auto inset-shadow-[1px_1px_2px_rgba(0,0,0,0.5)] bg-[#313131] text-white focus:outline-none focus:ring-2 focus:ring-amber-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      value={producto.stock_actual}
-                    />
-                    <button
-                      className="size-6 bg-amber-300 text-black shadow shadow-black/20 rounded-2xl ml-4"
-                      type="button"
-                      onClick={() =>
-                        actualizarStock(producto.id, producto.stock_actual + 1)
-                      }
-                    >
-                      +
-                    </button>
+                    <div className="flex">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          actualizarStock(
+                            producto.id,
+                            producto.stock_actual - 1,
+                          )
+                        }
+                        className="size-6 block bg-amber-300 text-black shadow shadow-black/20 rounded-2xl mr-4"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        id={`stock-${producto.id}`}
+                        onChange={(e) =>
+                          actualizarStockLocal(
+                            producto.id,
+                            Number(e.target.value),
+                          )
+                        }
+                        onBlur={(e) =>
+                          actualizarStock(producto.id, Number(e.target.value))
+                        }
+                        className="border border-amber-300/10 text-center rounded-xl px-2 py-1 w-20 m-auto inset-shadow-[1px_1px_2px_rgba(0,0,0,0.5)] bg-[#313131] text-white focus:outline-none focus:ring-2 focus:ring-amber-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        value={producto.stock_actual}
+                      />
+                      <button
+                        className="size-6 block bg-amber-300 text-black shadow shadow-black/20 rounded-2xl ml-4"
+                        type="button"
+                        onClick={() =>
+                          actualizarStock(
+                            producto.id,
+                            producto.stock_actual + 1,
+                          )
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
                   </td>
                   <td className="py-2 px-3 border-b border-amber-300/10">
                     {producto.stock_minimo}
                   </td>
                   <td className="py-2 px-3 border-b border-amber-300/10">
-                    {stockBajo ? (
-                      <span className="text-red-600 font-semibold">
+                    {producto.stock_actual === 0 ? (
+                      <div className="w-fit text-red-700 bg-red-700/50 rounded-2xl px-4 py-1 font-semibold">
+                        Sin stock
+                      </div>
+                    ) : producto.stock_actual <= producto.stock_minimo ? (
+                      <div className="w-fit text-amber-700 bg-amber-700/50 rounded-2xl px-4 py-1 font-semibold">
                         ⚠ Stock bajo
-                      </span>
+                      </div>
                     ) : (
-                      <span className="text-green-700 bg-green-700/50 rounded-2xl px-4 py-1 font-semibold">
+                      <div className="w-fit text-green-700 bg-green-700/50 rounded-2xl px-4 py-1 font-semibold">
                         OK
-                      </span>
+                      </div>
                     )}
                   </td>
                 </tr>

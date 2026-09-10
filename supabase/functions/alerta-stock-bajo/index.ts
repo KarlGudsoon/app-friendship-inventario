@@ -12,8 +12,7 @@ serve(async (req) => {
   const payload = await req.json()
   const record = payload.record // el producto actualizado
 
-  // Solo actuamos si el stock quedó igual o por debajo del mínimo
-  if (record.stock_actual <= record.stock_minimo) {
+  if (record.stock_actual === 0) {
     const resendApiKey = Deno.env.get('RESEND_API_KEY')
 
     const res = await fetch('https://api.resend.com/emails', {
@@ -25,11 +24,11 @@ serve(async (req) => {
       body: JSON.stringify({
         from: 'Inventario <onboarding@resend.dev>', // cambia esto cuando tengas dominio propio
         to: ['maturana.or.adrian@gmail.com'], // el correo del admin
-        subject: `⚠ Stock bajo: ${record.nombre}`,
+        subject: `⚠ Stock 0: ${record.nombre}`,
         html: `
-          <h2>Aviso de stock bajo</h2>
+          <h2>Aviso de stock 0</h2>
           <p><strong>${record.nombre}</strong> tiene stock actual de <strong>${record.stock_actual}</strong>, 
-          igual o por debajo del mínimo (${record.stock_minimo}).</p>
+           debajo del mínimo (${record.stock_minimo}).</p>
           <p>Por favor reabastecer pronto.</p>
         `,
       }),
@@ -37,6 +36,10 @@ serve(async (req) => {
 
     const data = await res.json()
     console.log('Resultado envío:', data)
+  }
+
+  // Solo actuamos si el stock quedó igual o por debajo del mínimo
+  if (record.stock_actual <= record.stock_minimo) {
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,

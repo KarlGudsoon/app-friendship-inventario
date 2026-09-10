@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #f0c807;
+  --color-secondary: #1d1d1d;
+}
+
 @font-face {
   font-family: "Josefin";
   src: url("./assets/fonts/JosefinSans-VariableFont_wght.woff2")
@@ -9,6 +14,11 @@
 @font-face {
   font-family: "Inter";
   src: url("./assets/fonts/inter-latin-wght-normal.woff2") format("truetype");
+}
+
+@font-face {
+  font-family: "Roadstore";
+  src: url("./assets/fonts/ROADSTORE Dafont-CrszRNwK.woff2") format("truetype");
 }
 
 ::-webkit-scrollbar {

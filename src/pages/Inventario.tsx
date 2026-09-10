@@ -48,7 +48,12 @@ export default function Inventario() {
     if (error) console.error("Error actualizando stock:", error);
   }
 
-  if (loading) return <p className="p-6">Cargando...</p>;
+  if (loading)
+    return (
+      <div className="p-6 flex-1 min-h-0 overflow-hidden flex flex-col text-white">
+        <div className="flex-1 h-full w-full overflow-auto bg-[#1d1d1d] rounded-2xl shadow-md shadow-black/25"></div>
+      </div>
+    );
 
   return (
     <div className="p-6 flex-1 min-h-0 overflow-hidden flex flex-col text-white">
@@ -56,7 +61,7 @@ export default function Inventario() {
         <h1 className="text-xl font-bold">Inventario cocina</h1>
       </div> */}
 
-      <div className="flex-1 min-h-0 overflow-auto rounded-2xl shadow-md shadow-black/25">
+      <div className="flex-1 min-h-0 h-full bg-[#1d1d1d] overflow-auto rounded-2xl shadow-md shadow-black/25">
         <table className="w-full border-separate border-spacing-0 bg-[#1d1d1d] rounded-2xl">
           <thead>
             <tr className="text-black text-left">
@@ -76,15 +81,13 @@ export default function Inventario() {
           </thead>
           <tbody>
             {productos.map((producto) => {
-              const stockBajo = producto.stock_actual < producto.stock_minimo;
-
               return (
                 <tr key={producto.id} className="">
                   <td className="py-2 px-3 border-b border-amber-300/10">
                     {producto.nombre}
                   </td>
                   <td className="py-2 px-3 border-b border-amber-300/10">
-                    <div className="flex">
+                    <div className="flex w-fit">
                       <button
                         type="button"
                         onClick={() =>

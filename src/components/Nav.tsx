@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../utils/supabaseClient";
 import { useAuth } from "../context/AuthContext";
+import { activarNotificaciones } from "../utils/pushNotifications";
 
 export default function Nav() {
   const navigate = useNavigate();
@@ -34,6 +35,15 @@ export default function Nav() {
         >
           Inventario
         </NavLink>
+
+        {session && (
+          <button
+            onClick={() => activarNotificaciones(session.user.id)}
+            className="text-sm text-gray-700 hover:text-black border px-3 py-1 rounded"
+          >
+            Activar notificaciones
+          </button>
+        )}
 
         {session && (
           <button

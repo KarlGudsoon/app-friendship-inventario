@@ -13,8 +13,47 @@ export default function Inventario() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+  fetchData()
+
+  // Suscripción a cambios en tiempo real
+  const channel = supabase
+    .channel('productos-realtime')
+    .on(
+      'postgres_changes',
+      {
+        event: '*', // escucha INSERT, UPDATE y DELETE
+        schema: 'public',
+        table: 'productos',
+      },
+      (payload) => {
+        console.log('Cambio detectado:', payload)
+
+        if (payload.eventType === 'UPDATE') {
+          setProductos((prev) =>
+            prev.map((p) =>
+              p.id === payload.new.id ? (payload.new as Producto) : p
+            )
+          )
+        }
+
+        if (payload.eventType === 'INSERT') {
+          setProductos((prev) => [...prev, payload.new as Producto])
+        }
+
+        if (payload.eventType === 'DELETE') {
+          setProductos((prev) =>
+            prev.filter((p) => p.id !== payload.old.id)
+          )
+        }
+      }
+    )
+    .subscribe()
+
+  // Limpieza: cuando el componente se desmonta, cierra la suscripción
+  return () => {
+    supabase.removeChannel(channel)
+  }
+}, [])
 
   async function fetchData() {
     setLoading(true);

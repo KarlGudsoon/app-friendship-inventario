@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../utils/supabaseClient";
+import { useRole } from "../hooks/useRole";
 
 interface Producto {
   id: number;
@@ -11,6 +12,7 @@ interface Producto {
 export default function Inventario() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
+  const { role } = useRole();
 
   useEffect(() => {
   fetchData()
@@ -85,6 +87,24 @@ export default function Inventario() {
       .eq("id", id);
 
     if (error) console.error("Error actualizando stock:", error);
+  }
+
+  function actualizarStockMinimoLocal(id: number, nuevoMinimo: number) {
+    setProductos((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, stock_minimo: nuevoMinimo } : p)),
+    );
+  }
+
+  async function actualizarStockMinimo(id: number, nuevoMinimo: number) {
+    const { error } = await supabase
+      .from("productos")
+      .update({ stock_minimo: nuevoMinimo })
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error actualizando stock mínimo:", error);
+      fetchData(); // revierte la UI al valor real de la base de datos
+    }
   }
 
   if (loading)
@@ -184,7 +204,22 @@ export default function Inventario() {
                     </div>
                   </td>
                   <td className="py-2 px-3 border-b border-amber-300/10">
-                    {producto.stock_minimo}
+                    {role === "admin" ? (
+                      <input
+                        type="number"
+                        min={0}
+                        value={producto.stock_minimo}
+                        onChange={(e) =>
+                          actualizarStockMinimoLocal(producto.id, Number(e.target.value))
+                        }
+                        onBlur={(e) =>
+                          actualizarStockMinimo(producto.id, Number(e.target.value))
+                        }
+                        className="border border-amber-300/10 text-center rounded-xl px-2 py-1 w-20 inset-shadow-[1px_1px_2px_rgba(0,0,0,0.5)] bg-[#313131] text-white focus:outline-none focus:ring-2 focus:ring-amber-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                    ) : (
+                      producto.stock_minimo
+                    )}
                   </td>
                 </tr>
               );

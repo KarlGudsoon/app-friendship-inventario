@@ -39,7 +39,7 @@ serve(async (req) => {
   }
 
   // Solo actuamos si el stock quedó igual o por debajo del mínimo
-  if (record.stock_actual <= record.stock_minimo) {
+  if (record.stock_actual < record.stock_minimo) {
 
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,

@@ -89,18 +89,18 @@ export default function Inventario() {
 
   if (loading)
     return (
-      <div className="md:p-6 flex-1 min-h-0 overflow-hidden flex flex-col text-white">
-        <div className="flex-1 h-full w-full overflow-auto bg-secondary md:rounded-2xl shadow-md shadow-black/25"></div>
+      <div className="flex-1 min-h-0 overflow-hidden flex flex-col text-white">
+        <div className="flex-1 h-full w-full overflow-auto bg-secondary shadow-md shadow-black/25"></div>
       </div>
     );
 
   return (
-    <div className="md:p-6 flex-1 min-h-0 overflow-hidden flex flex-col text-white">
+    <div className=" flex-1 min-h-0 overflow-hidden flex flex-col text-white">
       {/* <div className="mb-4 bg-amber-300 text-black p-4 rounded-2xl shadow-md shadow-black/25">
         <h1 className="text-xl font-bold">Inventario cocina</h1>
       </div> */}
 
-      <div className="flex-1 min-h-0 h-full bg-secondary overflow-auto md:rounded-2xl shadow-md shadow-black/25">
+      <div className="flex-1 min-h-0 h-full bg-secondary overflow-auto shadow-md shadow-black/25">
         <table className="w-full border-separate border-spacing-0 bg-secondary md:rounded-2xl">
           <thead>
             <tr className="text-black font-[Roadstore] text-left">

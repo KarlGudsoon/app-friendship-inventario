@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../utils/supabaseClient";
 import { useRole } from "../hooks/useRole";
 
@@ -13,9 +13,12 @@ export default function Inventario() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const { role } = useRole();
+  const writeTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
 
   useEffect(() => {
   fetchData()
+
+  const timers = writeTimers.current
 
   // Suscripción a cambios en tiempo real
   const channel = supabase
@@ -54,6 +57,7 @@ export default function Inventario() {
   // Limpieza: cuando el componente se desmonta, cierra la suscripción
   return () => {
     supabase.removeChannel(channel)
+    Object.values(timers).forEach(clearTimeout)
   }
 }, [])
 
@@ -81,12 +85,16 @@ export default function Inventario() {
       prev.map((p) => (p.id === id ? { ...p, stock_actual: nuevoStock } : p)),
     );
 
-    const { error } = await supabase
-      .from("productos")
-      .update({ stock_actual: nuevoStock })
-      .eq("id", id);
+    // Agrupa escrituras rápidas (-/+) para no persistir cada clic intermedio
+    clearTimeout(writeTimers.current[id]);
+    writeTimers.current[id] = setTimeout(async () => {
+      const { error } = await supabase
+        .from("productos")
+        .update({ stock_actual: nuevoStock })
+        .eq("id", id);
 
-    if (error) console.error("Error actualizando stock:", error);
+      if (error) console.error("Error actualizando stock:", error);
+    }, 400);
   }
 
   function actualizarStockMinimoLocal(id: number, nuevoMinimo: number) {

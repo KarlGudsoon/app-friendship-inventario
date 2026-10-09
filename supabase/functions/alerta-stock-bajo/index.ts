@@ -8,8 +8,8 @@ webpush.setVapidDetails(
   Deno.env.get('VAPID_PRIVATE_KEY')!
 )
 
-// Ventana de recordatorio para un producto que sigue bajo el mínimo
-const COOLDOWN_MS = 24 * 60 * 60 * 1000 // 24 horas
+// Ventana mínima entre avisos para un producto que sigue bajo el mínimo
+const COOLDOWN_MS = 60 * 60 * 1000 // 1 hora
 
 serve(async (req) => {
   const payload = await req.json()
@@ -27,30 +27,9 @@ serve(async (req) => {
     })
   }
 
-  const bajoAhora = record.stock_actual <= record.stock_minimo
-  const bajoAntes = oldRecord
-    ? oldRecord.stock_actual <= oldRecord.stock_minimo
-    : false
-
-  const cruzoBajo = bajoAhora && !bajoAntes
-  const cooldownOk =
-    !record.ultima_alerta_stock ||
-    Date.now() - new Date(record.ultima_alerta_stock).getTime() > COOLDOWN_MS
-
-  // Híbrido: avisa al cruzar el mínimo y reaparece como máximo cada 24 h
-  const debeAvisar = bajoAhora && (cruzoBajo || cooldownOk)
-
-  const ceroAhora = record.stock_actual === 0
+  // Correo solo cuando el producto llega a 0
   const ceroAntes = oldRecord ? oldRecord.stock_actual === 0 : false
-  const debeEnviarCorreo = ceroAhora && (!ceroAntes || cooldownOk)
-
-  if (!debeAvisar && !debeEnviarCorreo) {
-    return new Response(JSON.stringify({ ok: true, skipped: 'sin alerta' }), {
-      headers: { 'Content-Type': 'application/json' },
-    })
-  }
-
-  if (debeEnviarCorreo) {
+  if (record.stock_actual === 0 && !ceroAntes) {
     const resendApiKey = Deno.env.get('RESEND_API_KEY')
 
     const res = await fetch('https://api.resend.com/emails', {
@@ -76,43 +55,52 @@ serve(async (req) => {
     console.log('Resultado envío:', data)
   }
 
-  const supabaseAdmin = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-  )
+  // Push: solo si está bajo el mínimo y pasó al menos 1 hora desde el último aviso.
+  // La reserva atómica garantiza un único envío por ventana aunque lleguen
+  // varias invocaciones concurrentes (clics rápidos en -/+).
+  const bajoAhora = record.stock_actual <= record.stock_minimo
 
-  if (debeAvisar) {
-    const { data: subs } = await supabaseAdmin
-      .from('push_subscriptions')
-      .select('*')
+  if (bajoAhora) {
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    )
 
-    const mensaje = JSON.stringify({
-      title: `⚠ Stock bajo: ${record.nombre}`,
-      body: `Quedan ${record.stock_actual} (mínimo: ${record.stock_minimo})`,
-    })
+    const cutoff = new Date(Date.now() - COOLDOWN_MS).toISOString()
+    const { data: claimed, error: claimError } = await supabaseAdmin
+      .from('productos')
+      .update({ ultima_alerta_stock: new Date().toISOString() })
+      .eq('id', record.id)
+      .lt('ultima_alerta_stock', cutoff)
+      .select('id')
 
-    for (const sub of subs ?? []) {
-      try {
-        await webpush.sendNotification(
-          {
-            endpoint: sub.endpoint,
-            keys: { p256dh: sub.p256dh, auth: sub.auth },
-          },
-          mensaje
-        )
-      } catch (err) {
-        console.error('Error enviando push a', sub.endpoint, err)
+    if (claimError) console.error('Error reservando alerta:', claimError)
+
+    if (claimed && claimed.length > 0) {
+      const { data: subs } = await supabaseAdmin
+        .from('push_subscriptions')
+        .select('*')
+
+      const mensaje = JSON.stringify({
+        title: `⚠ Stock bajo: ${record.nombre}`,
+        body: `Quedan ${record.stock_actual} (mínimo: ${record.stock_minimo})`,
+      })
+
+      for (const sub of subs ?? []) {
+        try {
+          await webpush.sendNotification(
+            {
+              endpoint: sub.endpoint,
+              keys: { p256dh: sub.p256dh, auth: sub.auth },
+            },
+            mensaje
+          )
+        } catch (err) {
+          console.error('Error enviando push a', sub.endpoint, err)
+        }
       }
     }
   }
-
-  // Marca la última alerta para aplicar el cooldown de 24 h
-  const { error } = await supabaseAdmin
-    .from('productos')
-    .update({ ultima_alerta_stock: new Date().toISOString() })
-    .eq('id', record.id)
-
-  if (error) console.error('Error actualizando ultima_alerta_stock:', error)
 
   return new Response(JSON.stringify({ ok: true }), {
     headers: { 'Content-Type': 'application/json' },
